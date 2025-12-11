@@ -27,6 +27,10 @@ model.eval()
 # Initialize Flask app
 app = Flask(__name__)
 
+@app.route('/health', methods=['GET'])
+def health():
+    return jsonify({"status": "healthy"}), 200
+
 @app.route('/chat', methods=['POST'])
 def chat():
     message = request.json.get('message')
@@ -56,4 +60,4 @@ def chat():
     return jsonify({"response": response})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)

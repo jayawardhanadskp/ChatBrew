@@ -1,0 +1,34 @@
+# Dockerfile for training the chatbot model
+FROM python:3.11-slim
+
+# Set working directory in container
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements file
+COPY requirements.txt .
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Download required NLTK data
+RUN python -m nltk.downloader punkt stopwords
+
+# Copy training and utility files
+COPY train.py .
+COPY model.py .
+COPY nltk_utils.py .
+COPY intents.json .
+
+# Create directory for output model
+RUN mkdir -p /app/output
+
+# Set volumes for input/output
+VOLUME ["/app/output"]
+
+# Default command to run training
+CMD ["python", "train.py"]
